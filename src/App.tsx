@@ -149,10 +149,18 @@ export default function App() {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', service: 'Business Website', message: '' });
   const [showAllProjects, setShowAllProjects] = useState(false);
+  const [activeFilter, setActiveFilter] = useState('All');
+
+  const categories = ['All', 'Real Estate', 'Health', 'SaaS', 'Local', 'Eco'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleWhatsAppChat = () => {
+    const message = encodeURIComponent(`Hi Abhay, my name is ${formData.name || 'Guest'}. I'm interested in a ${formData.service}.`);
+    window.open(`https://wa.me/919625XXXXXX?text=${message}`, '_blank');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -182,7 +190,11 @@ export default function App() {
     { title: "GreenRoot", category: "Eco-Store", image: "https://picsum.photos/seed/green/800/600", link: "#" },
   ];
 
-  const displayedProjects = showAllProjects ? allProjects : allProjects.slice(0, 4);
+  const filteredProjects = activeFilter === 'All' 
+    ? allProjects 
+    : allProjects.filter(p => p.category.includes(activeFilter));
+
+  const displayedProjects = showAllProjects ? filteredProjects : filteredProjects.slice(0, 4);
 
   const testimonials: Testimonial[] = [
     { name: "Rajesh Sharma", role: "Owner, Sharma Groceries", content: "Abhay transformed our small shop's online presence. We started getting orders from parts of Faridabad we never reached before. Highly recommended!", avatar: "RS" },
@@ -196,7 +208,7 @@ export default function App() {
 
       {/* Hero Section */}
       <section id="home" className="relative min-h-[90vh] flex items-center pt-20 overflow-hidden bg-brand-surface">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-blue-50/50 -skew-x-12 transform origin-top-right hidden lg:block" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-indigo-50/50 -skew-x-12 transform origin-top-right hidden lg:block" />
         
         <div className="max-w-7xl mx-auto px-6 md:px-12 relative grid lg:grid-cols-2 gap-12 items-center">
           <motion.div 
@@ -204,12 +216,12 @@ export default function App() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-blue-600 text-sm font-semibold mb-6">
+            <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-100 text-indigo-600 text-sm font-semibold mb-6">
               Available for New Projects
             </span>
             <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight text-brand-primary leading-[1.1] mb-6">
-              I Build Websites That <br />
-              <span className="text-brand-accent">Turn Visitors Into Customers</span>
+              Crafting High-Performance <br />
+              <span className="text-brand-accent">Websites That Drive Growth</span>
             </h1>
             <p className="text-xl text-gray-600 mb-10 max-w-lg leading-relaxed">
               Helping local businesses and startups in Faridabad grow with high-performance, modern websites that actually work for your business.
@@ -255,7 +267,7 @@ export default function App() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative hidden lg:block"
           >
-            <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl shadow-blue-200 border-8 border-white">
+            <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl shadow-indigo-200 border-8 border-white">
               <img 
                 src="https://picsum.photos/seed/webdev/1200/900" 
                 alt="Web Design Mockup" 
@@ -326,7 +338,7 @@ export default function App() {
               </div>
               <div>
                 <h4 className="font-bold text-brand-primary text-xl mb-3 flex items-center gap-2">
-                  <Users className="text-blue-500" size={20} /> My Focus
+                  <Users className="text-indigo-500" size={20} /> My Focus
                 </h4>
                 <p className="text-gray-600 text-sm leading-relaxed">User experience, lead conversion, and blazing fast speeds. If it doesn't sell, it's not finished.</p>
               </div>
@@ -359,7 +371,7 @@ export default function App() {
                 transition={{ delay: idx * 0.1 }}
                 className="bg-white p-10 rounded-2xl border border-gray-100 hover:border-brand-accent transition-all hover:shadow-xl group"
               >
-                <div className="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center text-brand-accent mb-8 group-hover:bg-brand-accent group-hover:text-white transition-all">
+                <div className="w-14 h-14 rounded-xl bg-indigo-50 flex items-center justify-center text-brand-accent mb-8 group-hover:bg-brand-accent group-hover:text-white transition-all">
                   <service.icon size={28} />
                 </div>
                 <h3 className="text-xl font-bold text-brand-primary mb-4">{service.title}</h3>
@@ -378,6 +390,21 @@ export default function App() {
             title="Selected Projects" 
             description="Helping businesses across industries stand out with unique, high-performance web solutions."
           />
+
+          <div className="flex flex-wrap gap-4 mb-12">
+            {categories.map(cat => (
+              <button 
+                key={cat}
+                onClick={() => {
+                  setActiveFilter(cat);
+                  setShowAllProjects(true); // Auto expand when filtering
+                }}
+                className={`px-6 py-2 rounded-full text-sm font-bold transition-all ${activeFilter === cat ? 'bg-brand-accent text-white shadow-lg shadow-indigo-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
           
           <div className="grid md:grid-cols-2 gap-10">
             {displayedProjects.map((project, idx) => (
@@ -478,7 +505,7 @@ export default function App() {
                   {testimonials.map((t, i) => (
                     <div key={i} className={`pb-8 ${i !== testimonials.length - 1 ? 'border-bottom border-gray-100' : ''}`}>
                       <div className="flex gap-4 items-start mb-4">
-                        <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center font-bold text-brand-accent shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center font-bold text-brand-accent shrink-0">
                           {t.avatar}
                         </div>
                         <div>
@@ -576,9 +603,12 @@ export default function App() {
               </div>
 
               <div className="mt-12 flex gap-4">
-                <a href="https://wa.me/919625XXXXXX" className="bg-[#25D366] text-white px-8 py-4 rounded-xl flex items-center gap-3 font-bold hover:scale-105 transition-transform">
+                <button 
+                  onClick={handleWhatsAppChat}
+                  className="bg-[#25D366] text-white px-8 py-4 rounded-xl flex items-center gap-3 font-bold hover:scale-105 transition-transform"
+                >
                   <MessageSquare size={20} /> Chat on WhatsApp
-                </a>
+                </button>
               </div>
             </div>
 
